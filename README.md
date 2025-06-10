@@ -1,4 +1,4 @@
-# Pufu OS
+# Pufu OS (Pardum Felidum Operating System)
 
 Un sistema operativo minimalista y elegante escrito en C.
 
