@@ -1,0 +1,13 @@
+# Nodo árbitro inicial de Pufu
+# Este nodo muestra el mensaje de bienvenida
+
+main:
+    # Cargar char.pufu automáticamente
+    syscall (load_file) "char.pufu"
+
+    # Leer y mostrar el mensaje de bienvenida
+    syscall (read_file) "welcome.pufu"
+    syscall (write)
+
+    # Salir
+    syscall (exit) 

@@ -1,0 +1,21 @@
+# Archivos compilados
+bin/
+obj/
+
+# Archivos de respaldo
+*_backup/
+
+# Archivos del sistema
+.DS_Store
+*.swp
+*~
+
+# Archivos de IDE
+.vscode/
+.idea/
+
+# Archivos de dependencias
+*.o
+*.a
+*.so
+*.dylib 

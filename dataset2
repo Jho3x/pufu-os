@@ -1,0 +1,46 @@
+Operaciones Aritméticas:
+add - Suma
+sub - Resta
+mul - Multiplicación
+neg - Negación (cambiar signo)
+NO HAY DIV(division)
+
+Operaciones Lógicas:
+and - AND bit a bit
+or - OR bit a bit
+xor - XOR bit a bit
+not - NOT bit a bit
+shl - Desplazamiento a la izquierda
+shr - Desplazamiento a la derecha
+
+Operaciones de Comparación:
+cmp - Comparar
+test - Prueba de bits
+
+Operaciones de Memoria:
+load - Cargar de memoria a registro
+store - Guardar de registro a memoria
+push - Apilar en la pila
+pop - Desapilar de la pila
+
+Operaciones de Control:
+jmp - Salto incondicional
+je - Salto si igual
+jne - Salto si no igual
+jg - Salto si mayor
+jl - Salto si menor
+call - Llamar a subrutina
+ret - Retornar de subrutina
+
+Operaciones de Registro:
+mov - Mover entre registros
+swap - Intercambiar registros
+
+Operaciones de Pila:
+push - Apilar
+pop - Desapilar
+
+Operaciones de Sistema:
+nop - No operación
+halt - Detener ejecución
+syscall - Llamada al sistema

@@ -1,0 +1,30 @@
+import Pufu
+
+# 1. INICIALIZACIÓN DEL NODO ( Lo creo y firmo hexadecimalmente, se crea el nodo simbolico como entrada en Pufu(principal) )
+Pufu.seed(type: "__PuFu__.node", name:"node.pufu", direction:"here")
+# Lee el archivo node.pufu, corrobora la firma hexadecimal y enlaza con su respectivo puntero en Pufu (principal)
+Pufu.read(name:"node.pufu", direction:"here")
+# este archivo es releido he ignorado hasta las marcas Pu y Fu respectivamente
+__Pu
+# 2. CONFIGURACIÓN INICIAL
+Pufu.set(class:"Pufu", alias:"none")  # A partir de ahora no se necesitan prefijos en las funciones
+# 3. CREACIÓN DE OBJETOS
+new (gear:"engranaje", window:"ventana", space:"espacio", text3D:"texto", camera:"camara", light:"luz", sphere:"esfera", emitter:"fuego", cube:"cubo")
+
+# 4. CONFIGURACIÓN DE PROPIEDADES
+texto.set(string: "Pufu 3D")
+espacio.add("cubo, esfera, luz, camara, fuego, texto")
+espacio.set(camera:"camara")
+ventana.set(rectangle:"480*320", space:"espacio")
+#
+cubo.set(pos:(0, 0, 0), type:"skymesh", scale:20)
+esfera.set(pos:(-2, 0, 0), color:"fuchsia")
+luz.set(pos:(0, 0, 3), color:"white")
+fuego.set(pos:(2, 0, 0), type:"fire")
+texto.set(pos:(0, 0, 2), type:"follow")
+camara.set(pos:(0, -3, 0), view:(0, 0, 0))
+
+# 5. CONTROL Y EJECUCIÓN
+engranaje.set(control: (espacio, ventana))
+engranaje.run()
+__Fu

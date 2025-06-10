@@ -1,0 +1,13 @@
+// Nodo char.pufu: Funciones básicas para leer caracteres y archivos de texto
+
+// Función para leer un carácter
+syscall (read_char)
+
+// Función para leer un archivo de texto
+syscall (read_file)
+
+// Función para mostrar un mensaje
+syscall (write)
+
+// Función para salir
+syscall (exit) 
