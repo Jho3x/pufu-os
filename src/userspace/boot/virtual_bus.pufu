@@ -1,0 +1,16 @@
+# Teon: Bus de Comunicaciones
+# Gestiona mensajes y red
+
+main:
+    syscall (write) "Teon: Bus IPC iniciado."
+    syscall (write) "Teon: Estableciendo canales de comunicación..."
+    syscall (write) "Teon: Conectando con Aphi..."
+    
+    # Cargar Bienvenida (Desactivado, ahora lo maneja user.pufu)
+    # syscall (write) "Teon: Cargando interfaz de usuario..."
+    # syscall (spawn) "welcome.pufu"
+    
+    # Teon Main Loop
+    label loop
+    syscall (sleep) "1000"
+    jmp loop

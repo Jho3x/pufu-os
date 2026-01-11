@@ -1,0 +1,12 @@
+# System Configuration
+# Loads the essential nodes for the Operating System
+
+syscall (write) "System: Loading Core Services..."
+
+# 1. Graphics Engine
+# syscall (spawn) "trinity.pufu" (Disabled for manual launch integration)
+
+# 2. visual Boot & Session Manager
+syscall (spawn) "src/userspace/services/session_manager.pufu"
+
+syscall (write) "System: Core Services Loaded."

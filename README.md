@@ -1,42 +1,26 @@
-# Pufu OS (Pardum Felidum Operating System)
+# Pufu OS (v0.6 'Peking Duck')
 
-Un sistema operativo minimalista y elegante escrito en C.
+**Pufu OS** is an experimental, fractal operating system built on a custom Virtual Machine architecture.
 
-## Características
+## 📚 Documentation Flow
 
-- Sistema de nodos para cargar y ejecutar código dinámicamente
-- Soporte para múltiples arquitecturas (ARM, x86_64)
-- Hot-reload para desarrollo en tiempo real
-- Interfaz de línea de comandos simple y efectiva
+If you are an AI agent or developer looking to understand the system, follow this reading order:
 
-## Requisitos
+### 1. High-Level Concepts
+*   [Architecture](file:///home/joel/z_pufu_4/docs/architecture.md): Explains the Fractal UI, Event-Driven MVC, and "Frame" concepts.
+*   [Terminal Architecture (Oxide)](file:///home/joel/z_pufu_4/docs/oxide_reference.md): Explains TWS (Window Spaces), Async CLI, and Headless Apps.
 
-- GCC
-- Make
-- Sistema operativo Linux
+### 2. Technical References
+*   [Socket Reference (HAL)](file:///home/joel/z_pufu_4/docs/socket_reference.md): "The Hardware". Defines the `PufuSocket` structs, Hot Swap mechanism, and API dictionary.
+*   [Paw Language (ASM)](file:///home/joel/z_pufu_4/docs/paw_reference.md): "The Assembly". Dictionary of instructions for the Pufu VM.
 
-## Compilación
+### 3. Implementation Details
+*   [Directory Structure](file:///home/joel/z_pufu_4/docs/directory_structure.md): **Start Here**. Detailed breakdown of every folder and key file in the repo.
+*   [MVP Plan](file:///home/joel/z_pufu_4/docs/mvp_plan.md): Historical roadmap of the "Pure VM" refactor.
+*   [Hot Swap Spec](file:///home/joel/z_pufu_4/docs/hot_swap_spec.md): Specification for the dynamic reload system.
 
-```bash
-make clean
-make
-```
-
-## Ejecución
-
+## 🚀 Quick Start
+Run the OS (booting to Oxide Shell):
 ```bash
 make run
 ```
-
-## Estructura del Proyecto
-
-- `src/`: Código fuente
-  - `core/`: Núcleo del sistema
-  - `sockets/`: Implementaciones específicas por arquitectura
-- `include/`: Archivos de cabecera
-- `bin/`: Binarios compilados
-- `obj/`: Archivos objeto
-
-## Licencia
-
-MIT 

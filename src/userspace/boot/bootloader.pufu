@@ -1,0 +1,7 @@
+_pufu::init::bootloader.pufu
+# Spark (Bootloader Shim)
+# Boots the Task Manager
+
+syscall (write) "Spark: Igniting System..."
+syscall (spawn) "src/userspace/services/task_manager.pufu"
+syscall (kill) "src/userspace/boot/bootloader.pufu"

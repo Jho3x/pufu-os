@@ -1,0 +1,20 @@
+# OTA Update Demo
+# 1. Download updated driver from "Cloud" (Localhost)
+# 2. Hot Swap to the new driver
+
+(write) "Starting OTA Update Process..."
+(write) "Connecting to Update Server..."
+
+# Download to /tmp/pufu_update.so
+# Note: In real simulation we point to localhost:8001
+(download_update) "http://localhost:8001/socket_arm_net.so.bak"
+
+(write) "Download Complete. Verifying..."
+(sleep) 1000
+
+(write) "Applying Update..."
+(system_update) "/tmp/pufu_update.so"
+
+(write) "Update Installed Successfully. Checking Version..."
+(get_version)
+(exit)

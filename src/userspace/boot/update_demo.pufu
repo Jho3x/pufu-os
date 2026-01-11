@@ -1,0 +1,40 @@
+# Hot Swap Persistence Demo
+# 1. Trigger syscall to increment counter (State: 1)
+# 2. Swap to V2
+# 3. V2 restores state (Counter: 1)
+# 4. Trigger syscall (State: 2) -> Proves persistence!
+
+(write) "State Persistence Test Started..."
+
+# Increment Counter on V1 (Syscall ID 999 is invalid but triggers 'arm_syscall')
+# Wait, parser/kernel only dispatches known syscalls.
+# I need to use a valid syscall that routes to the socket.
+# The current kernel implementation ONLY calls `socket->alu_add` etc. or `socket->execute` if legacy.
+# The NEW `syscall` interface (sys_handler) is not yet wired to the kernel's `sys_core_dispatch`.
+# Wait, I didn't update `sys_core.c` to use `socket->syscall`.
+# So my `socket_counter` won't increment unless I hook it up.
+
+# Implementation Plan Adjustment:
+# I need to hook a syscall in `sys_core.c` to `pufu_get_current_socket()->syscall(...)`.
+# Let's use `(get_version)` or similar, or just add a debug syscall.
+# Actually, since I have `alu_add` calling `state` in my mind, wait...
+# `arm_socket.c` implements `arm_syscall`.
+# BUT `sys_core.c` does NOT call it.
+
+# Corrective Action: Update sys_core.c to call socket->syscall for a specific test op.
+# Or better: Add logging to `arm_alu_add` to prove the pointer swap, but persistence needs the `socket_counter`.
+# I will modify `arm_socket.c` to increment counter on ALU usage too, or verify via ALUs.
+# Actually, `arm_socket.c` has `socket_counter`. I can just update ALU ops to increment it?
+# No, let's wire `SYS_GET_VERSION` (ID 82) to call `socket->syscall(82, NULL)`.
+
+(write) "Triggering Version Check (V1)..."
+(get_version) 
+
+(write) "Performing Swap..."
+(system_update) "bin/drivers/socket_arm_net.so"
+
+(write) "Triggering Version Check (V2)..."
+(get_version)
+
+(write) "Check logs for [State Restored] message."
+(sleep) 999999

@@ -1,43 +1,63 @@
 CC = gcc
-CFLAGS = -I./include -Wall -Wextra
-LDFLAGS = -ldl
+# Optimization Flags
+CFLAGS = -I./include -Wall -Wextra -O2
+
+LDFLAGS = -ldl -rdynamic
 
 SRC_DIR = src
 OBJ_DIR = obj
 BIN_DIR = bin
 
-# Archivos fuente
-CORE_SRCS = $(filter-out $(SRC_DIR)/core/main.c, $(wildcard $(SRC_DIR)/core/*.c))
-ARM_SRCS = $(wildcard $(SRC_DIR)/sockets/arm/*.c)
-X86_SRCS = $(wildcard $(SRC_DIR)/sockets/x86_64/*.c)
-BOOTLOADER = $(SRC_DIR)/core/bootloader.c
+# Sources
+BOOTLOADER_SRC = src/vm/entry.c
+# Sources
+BOOTLOADER_SRC = src/vm/entry.c
+CORE_SRCS = src/vm/entry.c \
+            src/vm/node_core.c \
+            src/vm/node_exec.c \
+            src/vm/parser.c \
+            src/ipc/virtual_bus.c \
+            src/system/hot_reload.c \
+            src/system/watchdog.c \
+            src/hal/dyn_loader.c \
+            src/graphics/core/context.c \
+            src/graphics/core/assets.c src/graphics/core/renderer.c \
+            src/graphics/core/scene.c src/graphics/core/engine.c src/graphics/core/loader.c \
+            src/graphics/trinity/trinity_core.c src/graphics/trinity/trinity_nodes.c \
+            src/graphics/trinity/trinity_events.c src/graphics/trinity/trinity_render.c \
+            src/graphics/backend/opengl_es_backend.c src/system/labeloid.c \
+            src/system/meow_parser.c \
+            src/system/terminal.c src/kernel/dispatch.c \
+            src/kernel/syscalls/sys_core.c src/kernel/syscalls/sys_process.c \
+            src/kernel/syscalls/sys_trinity.c src/kernel/syscalls/sys_ipc.c \
+            src/system/crystal.c src/system/logger.c src/system/task_manager.c
+# ARM Socket is now a driver, not part of core
+# ARM_SRCS = src/hal/arm/arm_socket.c
 
 # Archivos objeto
 CORE_OBJS = $(CORE_SRCS:$(SRC_DIR)/%.c=$(OBJ_DIR)/%.o)
-ARM_OBJS = $(ARM_SRCS:$(SRC_DIR)/%.c=$(OBJ_DIR)/%.o)
-X86_OBJS = $(X86_SRCS:$(SRC_DIR)/%.c=$(OBJ_DIR)/%.o)
+# ARM_OBJS = $(ARM_SRCS:$(SRC_DIR)/%.c=$(OBJ_DIR)/%.o)
+
 BOOTLOADER_OBJ = $(OBJ_DIR)/core/bootloader.o
 
 # Binarios
-PARSER = $(BIN_DIR)/pufu_parser
-NODE = $(BIN_DIR)/pufu_node
+NODE = $(BIN_DIR)/pufu_os
 
 # Reglas principales
-all: directories $(PARSER) $(NODE)
+all: directories $(NODE) drivers
+	@echo "Core Objs: $(CORE_OBJS)"
 
 directories:
 	@mkdir -p $(OBJ_DIR)/core
-	@mkdir -p $(OBJ_DIR)/sockets/arm
-	@mkdir -p $(OBJ_DIR)/sockets/x86_64
+	@mkdir -p $(OBJ_DIR)/vm
+	@mkdir -p $(OBJ_DIR)/hal/arm
+	@mkdir -p $(OBJ_DIR)/kernel
 	@mkdir -p $(BIN_DIR)
 
-# Compilar el parser
-$(PARSER): $(OBJ_DIR)/core/parser.o $(OBJ_DIR)/core/main.o
-	$(CC) $(CFLAGS) -o $@ $^
-
-# Compilar el nodo (usando bootloader.c como main)
-$(NODE): $(BOOTLOADER_OBJ) $(CORE_OBJS) $(ARM_OBJS) $(X86_OBJS)
-	$(CC) $(CFLAGS) $(LDFLAGS) -o $@ $^
+# Linkeo - Note: No ARM_OBJS here!
+$(NODE): $(CORE_OBJS)
+	@mkdir -p bin
+	$(CC) $(CFLAGS) $(LDFLAGS) -o $@ $^ -lX11 -lEGL -lGLESv2 -lm
 
 # Regla para compilar archivos objeto
 $(OBJ_DIR)/%.o: $(SRC_DIR)/%.c
@@ -48,12 +68,14 @@ $(OBJ_DIR)/%.o: $(SRC_DIR)/%.c
 clean:
 	rm -rf $(OBJ_DIR) $(BIN_DIR)
 
-# Ejecutar el parser con so.pufu
-parse: all
-	$(PARSER) so.pufu
+# Ejecutar el nodo bootloader.pufu
+run: all drivers
+	$(NODE) src/userspace/boot/bootloader.pufu
 
-# Ejecutar el nodo so.pufu
-run: all
-	$(NODE) so.pufu
+# Drivers (Shared Objects for Hot Swap)
+drivers: directories
+	@mkdir -p $(BIN_DIR)/drivers
+	$(CC) $(CFLAGS) -fPIC -shared src/hal/arm/arm_socket.c -o $(BIN_DIR)/drivers/socket_arm.so
+	$(CC) $(CFLAGS) -fPIC -shared src/hal/arm/arm_socket_net.c -o $(BIN_DIR)/drivers/socket_arm_net.so
 
-.PHONY: all clean run parse directories 
+.PHONY: all clean run parse directories drivers 
