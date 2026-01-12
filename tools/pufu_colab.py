@@ -40,9 +40,10 @@ def stream_reader(pipe, name):
 def run_os():
     print("Launching Pufu OS (Background)...")
     # Must pass the bootloader script
-    # We use PIPE to capture output, but read it in threads to avoid blocking
+    # We use PIPE to capture output and provide input
     proc = subprocess.Popen(
         ["./bin/pufu_os", "src/userspace/boot/bootloader.pufu"],
+        stdin=subprocess.PIPE,  # Enable Stdin
         stdout=subprocess.PIPE,
         stderr=subprocess.PIPE,
         bufsize=0 # Unbuffered
@@ -58,6 +59,30 @@ def run_os():
     t_err.start()
     
     return proc
+
+def input_loop(proc):
+    """
+    Reads from Colab input() and sends to Pufu OS stdin.
+    This blocks the main thread, but output threads keep running.
+    """
+    print("\n[Interactive Mode Enabled] Type commands below and press Enter.")
+    print("To exit the input loop (but keep Pufu running), type 'CTRL+C' or interrupt kernel.\n")
+    try:
+        while proc.poll() is None:
+            # In Colab, this creates an input box
+            try:
+                # We use a non-blocking check if possible, but input() is blocking.
+                # Just loop input.
+                cmd = input() 
+                if cmd:
+                    # Send input + newline to Pufu
+                    msg = cmd + "\n"
+                    proc.stdin.write(msg.encode())
+                    proc.stdin.flush()
+            except EOFError:
+                break
+    except KeyboardInterrupt:
+        print("\n[Input Loop Stopped] Pufu OS continues in background...")
 
 def wait_for_server(port, proc, timeout=30):
     print(f"Waiting for Pufu OS Web Backend on port {port}...")
@@ -116,6 +141,14 @@ def start_ngrok(port, proc):
     finally:
         ngrok.kill()
 
+def network_manager(proc):
+    # Wait for the service to be ready
+    if wait_for_server(8081, proc):
+        # Use Ngrok
+        start_ngrok(8081, proc)
+    else:
+        print("Error: Pufu OS Web Backend failed to start.")
+
 def main():
     if not os.path.exists("Makefile"):
         print("Error: Run this from the repository root.")
@@ -136,14 +169,13 @@ def main():
     
     proc = run_os()
     
-    # Wait for the service to be ready
-    if not wait_for_server(8081, proc):
-        print("Error: Pufu OS Web Backend failed to start (Timeout or Crash).")
-        proc.terminate()
-        return
-
-    # Use Ngrok
-    start_ngrok(8081, proc)
+    # Start Network Manager in Background
+    t_net = threading.Thread(target=network_manager, args=(proc,))
+    t_net.daemon = True
+    t_net.start()
+    
+    # Run Interactive Input in Main Thread
+    input_loop(proc)
     
     # Cleanup
     if proc.poll() is None:
