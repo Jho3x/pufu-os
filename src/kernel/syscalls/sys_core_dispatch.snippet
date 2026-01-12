@@ -1,0 +1,38 @@
+int sys_core_dispatch(PufuNode *node, PufuInstruction *inst) {
+  switch (inst->syscall_id) {
+  case SYS_WRITE:
+    return sys_write(node, inst);
+  case SYS_READ_CHAR:
+    return sys_read_char(node, inst);
+  case SYS_CONSOLE_INPUT:
+    return sys_console_input(node, inst);
+  case SYS_PRINT_CHAR:
+    return sys_print_char(node, inst);
+  case SYS_CLEAR_BUFFER:
+    return sys_clear_buffer(node);
+  case SYS_SET_BUFFER:
+    return sys_set_buffer(node, inst);
+  case SYS_LOG_BUFFER:
+    return sys_log_buffer(node);
+  case SYS_STRING_CMP:
+    return sys_string_cmp(node, inst);
+  case SYS_CONSOLE_CLEAR:
+    return sys_console_clear(node);
+  case SYS_SET_PROMPT:
+    return sys_set_prompt(node, inst);
+  case SYS_CAT:
+    return sys_cat(node, inst);
+  case SYS_CONFIG_GET:
+    return sys_config_get(node, inst);
+  case SYS_PREPEND_STRING:
+    return sys_prepend_string(node, inst);
+  case SYS_APPEND_STRING:
+    return sys_append_string(node, inst);
+  case SYS_ITOA:
+    return sys_itoa(node);
+  case SYS_GET_VERSION:
+    return sys_get_version(node);
+  default:
+    return 0;
+  }
+}

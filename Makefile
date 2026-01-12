@@ -20,12 +20,9 @@ CORE_SRCS = src/vm/entry.c \
             src/system/hot_reload.c \
             src/system/watchdog.c \
             src/hal/dyn_loader.c \
-            src/graphics/core/context.c \
-            src/graphics/core/assets.c src/graphics/core/renderer.c \
-            src/graphics/core/scene.c src/graphics/core/engine.c src/graphics/core/loader.c \
             src/graphics/trinity/trinity_core.c src/graphics/trinity/trinity_nodes.c \
             src/graphics/trinity/trinity_events.c src/graphics/trinity/trinity_render.c \
-            src/graphics/backend/opengl_es_backend.c src/system/labeloid.c \
+            src/hal/video/web_backend.c src/system/labeloid.c \
             src/system/meow_parser.c \
             src/system/terminal.c src/kernel/dispatch.c \
             src/kernel/syscalls/sys_core.c src/kernel/syscalls/sys_process.c \
@@ -57,7 +54,7 @@ directories:
 # Linkeo - Note: No ARM_OBJS here!
 $(NODE): $(CORE_OBJS)
 	@mkdir -p bin
-	$(CC) $(CFLAGS) $(LDFLAGS) -o $@ $^ -lX11 -lEGL -lGLESv2 -lm
+	$(CC) $(CFLAGS) $(LDFLAGS) -o $@ $^ -lpthread -lm
 
 # Regla para compilar archivos objeto
 $(OBJ_DIR)/%.o: $(SRC_DIR)/%.c

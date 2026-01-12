@@ -1,0 +1,58 @@
+# Greeter GUI (Beige App)
+# Displays "Pufu [Version]"
+
+syscall (write) "Greeter: Fetching System Version..."
+
+# 1. Create Frame
+syscall (create_ui_window) "VersionWindow"
+# Pos: 200, 200, Size: 300, 150
+syscall (clear_buffer)
+syscall (prepend_string) "200 200 300 150"
+syscall (trinity_set_vec4) "VersionWindow rect"
+# Color (Beige Light)
+syscall (clear_buffer)
+syscall (prepend_string) "0.96 0.96 0.86"
+syscall (trinity_set_vec3) "VersionWindow bg_color"
+syscall (clear_buffer)
+syscall (prepend_string) "Pufu Version Info"
+syscall (trinity_set_string) "VersionWindow title"
+
+# 2. Fetch Version String
+# Syscall 82: Get Version -> Input Buffer
+syscall (82)
+# Prepend "Pufu "
+syscall (prepend_string) "Pufu "
+
+# 3. Create Label to show it
+# Using a disabled button as a label
+syscall (create_ui_button) "VersionLabel"
+# Pos: 20, 50, W: 260, H: 40 (Relative to Frame? No, Absolute for now)
+# Frame is at 200,200. Label at 220, 250.
+syscall (clear_buffer)
+syscall (prepend_string) "220 250 260 40"
+syscall (trinity_set_vec4) "VersionLabel rect"
+# Transparent/Match BG
+syscall (clear_buffer)
+syscall (prepend_string) "0.96 0.96 0.86"
+syscall (trinity_set_vec3) "VersionLabel color_off"
+syscall (trinity_set_vec3) "VersionLabel color_on"
+
+# Set Label Text (From Input Buffer)
+# Syscall 72: Set String. Argument is property name "label". Value is InputBuffer?
+# Calling syntax: syscall(72) "Node Property"
+# Wait, syscall 72 takes "Node Property" as arg1?
+# Let's check dispatch.c:
+# case SYS_TRINITY_SET_STRING:
+#   clean_string_arg(arg, inst->reg1);
+#   sscanf(arg, "%s %s", node_name, prop_name);
+#   trinity_set_string(id, prop_name, node->input_buffer);
+#
+# So I need to put "VersionLabel label" in reg1.
+# And ensure InputBuffer has the value.
+# InputBuffer currently has "Pufu 0.5.2..." from prepend_string.
+# So I just call:
+syscall (trinity_set_string) "VersionLabel label"
+
+label loop
+    syscall (sleep) 1000
+    jmp loop

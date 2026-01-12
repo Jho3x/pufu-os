@@ -1,0 +1,7 @@
+# Shutdown Command
+syscall (write) "Syscall: Shutdown requested."
+# Send IPC command "shutdown" (ID 4) to Task Manager 
+syscall (clear_buffer)
+syscall (prepend_string) "shutdown"
+syscall (ipc_broadcast_from_buffer)
+syscall (exit)

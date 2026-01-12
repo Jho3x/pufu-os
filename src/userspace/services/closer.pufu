@@ -1,0 +1,13 @@
+# Closer Service (Turquoise App)
+# Kills open GUI apps
+
+syscall (write) "Closer: Terminating Apps..."
+
+# Kill Greeter
+syscall (kill) "src/userspace/apps/test/greeter_gui.pufu"
+
+# Kill Alba
+syscall (kill) "src/userspace/apps/ai/alba_gui.pufu"
+
+syscall (write) "Closer: Cleanup Complete."
+syscall (exit) 0

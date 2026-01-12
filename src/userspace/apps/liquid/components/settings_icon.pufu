@@ -1,0 +1,12 @@
+# Component: Settings Icon (Left of Miau) - Refactored to NODE_UI_IMAGE
+syscall (clear_buffer)
+# X=650 (Left of 690), Y=5, W=30, H=30
+syscall (prepend_string) "650 5 30 30"
+syscall (create_ui_image) "SettingsIcon"
+
+# Image Source
+syscall (clear_buffer)
+syscall (prepend_string) "media/icons/gear.svg"
+syscall (trinity_set_string) "SettingsIcon src"
+
+syscall (exit)

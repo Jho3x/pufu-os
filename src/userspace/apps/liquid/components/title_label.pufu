@@ -1,0 +1,17 @@
+# Component: Title Label
+syscall (clear_buffer)
+syscall (prepend_string) "4 5 200 30"
+syscall (create_ui_button) "TitleLabel"
+
+# Colors
+syscall (clear_buffer)
+syscall (prepend_string) "0.8 0.8 0.8"
+syscall (trinity_set_vec3) "TitleLabel color_on"
+syscall (trinity_set_vec3) "TitleLabel color_off"
+
+# Label
+syscall (clear_buffer)
+syscall (prepend_string) "Pufu Desktop"
+syscall (trinity_set_string) "TitleLabel label"
+
+syscall (exit)

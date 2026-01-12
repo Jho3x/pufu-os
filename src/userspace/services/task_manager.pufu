@@ -1,0 +1,106 @@
+# TaskManager: Supervisor del Sistema
+# Monitorea nodos y carga VirtualBus
+
+main:
+    syscall (write) "TaskManager: Supervisor iniciado."
+    syscall (write) "TaskManager: Registrando bootloader.pufu..."
+    
+    # Cargar VirtualBus (Sistema Nervioso)
+    syscall (write) "TaskManager: Spawning VirtualBus..."
+    syscall (spawn) "src/userspace/boot/virtual_bus.pufu"
+
+    syscall (write) "TaskManager: System ready."
+    syscall (spawn) "src/userspace/boot/system.pufu"
+
+    # TaskManager Main Loop
+    label loop
+    syscall (sleep) "1000"
+    
+    # Check for IPC commands
+    mov r0 0
+    syscall (ipc_read) r0
+    cmp r0 1
+    beq on_command
+    
+    jmp loop
+
+    label on_command
+    syscall (write) "TaskManager: Command received."
+    
+    # Parse command in ipc_buffer (which is now in input_buffer due to ipc_read)
+    # r0 = 2 (stop)
+    syscall (parse_command) r0
+    
+    cmp r0 2
+    beq do_kill
+
+    # Check for shutdown (r0 = 4, assuming parse_command handles it, or check string manually)
+    # For now, let's assume parse_command returns 4 for "shutdown"
+    # Or we can check if input_buffer is "shutdown"
+    # Let's use parse_command. I need to update node.c/parse_command to recognize "shutdown".
+    # Wait, parse_command is hardcoded in node.c.
+    # Let's check node.c to see what parse_command does.
+    # If I can't update node.c easily, I can just check the string here.
+    # But let's assume I will update node.c to return 4.
+    cmp r0 4
+    beq do_shutdown
+    
+    cmp r0 5
+    beq loop # Ignore system events
+    
+    syscall (write) "TaskManager: Unknown command."
+    jmp loop
+    
+    label do_kill
+    # input_buffer now contains just the app name (parse_command stripped "stop ")
+    syscall (kill_from_buffer)
+    syscall (write) "TaskManager: Process terminated."
+    jmp loop
+
+    label do_shutdown
+    syscall (write) "TaskManager: System Shutdown Initiated..."
+    
+    # Kill all known processes
+    # We have to do this manually by name for now
+    syscall (write) "TaskManager: Stopping Alba..."
+    syscall (clear_buffer)
+    syscall (prepend_string) "alba.pufu" # Hack to set buffer
+    syscall (kill_from_buffer)
+    
+    syscall (write) "TaskManager: Stopping Startup..."
+    syscall (clear_buffer)
+    syscall (prepend_string) "startup.pufu"
+    syscall (kill_from_buffer)
+    
+    syscall (write) "TaskManager: Stopping Liquid..."
+    syscall (clear_buffer)
+    syscall (prepend_string) "src/userspace/apps/liquid/desktop.pufu"
+    syscall (kill_from_buffer)
+    
+    syscall (write) "TaskManager: Stopping Oxide..."
+    syscall (clear_buffer)
+    syscall (prepend_string) "src/userspace/oxide/shell.pufu"
+    syscall (kill_from_buffer)
+
+    syscall (write) "TaskManager: Stopping Trinity..."
+    syscall (clear_buffer)
+    syscall (prepend_string) "trinity.pufu"
+    syscall (kill_from_buffer)
+    
+    syscall (write) "TaskManager: Stopping Trinity Demo..."
+    syscall (clear_buffer)
+    syscall (prepend_string) "src/userspace/apps/trinity_demo.pufu"
+    syscall (kill_from_buffer)
+    
+    syscall (write) "TaskManager: Stopping System..."
+    syscall (clear_buffer)
+    syscall (prepend_string) "src/userspace/boot/system.pufu"
+    syscall (kill_from_buffer)
+    
+    syscall (write) "TaskManager: Stopping VirtualBus..."
+    syscall (clear_buffer)
+    syscall (prepend_string) "src/userspace/boot/virtual_bus.pufu"
+    syscall (kill_from_buffer)
+    
+    syscall (write) "TaskManager: Goodbye."
+    syscall (shutdown)

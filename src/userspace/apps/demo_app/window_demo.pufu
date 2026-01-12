@@ -1,0 +1,16 @@
+# Generic Window Component
+# Creates a Window Node
+
+syscall (clear_buffer)
+syscall (prepend_string) "100 100 400 300"
+syscall (create_ui_window) "TestWindow"
+
+# Set Title
+syscall (clear_buffer)
+syscall (prepend_string) "Hello Window Access!"
+syscall (trinity_set_string) "TestWindow title"
+
+# Wait loop
+label loop
+syscall (sleep) 1000
+jmp loop

@@ -1,0 +1,129 @@
+# Window Manager Service
+# Handles Mouse interactions with Windows (Moving)
+
+# R0: Status
+# R1: EventType / Temp
+# R2: MouseX / Temp
+# R3: MouseY / Temp
+# R4: TargetID / Temp
+# R5: DragState (0=Idle, 1=Dragging)
+# R6: DragTargetID
+# R7: OffsetX
+# R8: OffsetY
+# R9: WinW
+# R10: WinH
+# R11: Scratch
+# R12: Scratch
+
+start:
+    mov r5 0
+    mov r6 -1
+    mov r1 1
+    syscall 1 # WRITE "Window Manager Running..."
+
+loop:
+    # Poll Events
+    syscall 75 # SYS_TRINITY_POLL_EVENT -> r1, r2, r3, r4
+    
+    cmp r1 0
+    je loop
+
+    cmp r1 4
+    je on_mouse_down
+
+    cmp r1 5
+    je on_mouse_up
+
+    cmp r1 6
+    je on_mouse_move
+    
+    jmp loop
+
+on_mouse_down:
+    # DEBUG: Print Mouse Down
+    mov r1 53 # "Mouse Down" (Need string in buffer?)
+    # Simple debug for now: just print "Down"
+    # We don't have good string literals in asm yet without 'mov input_buffer "str"'
+    
+    # If no valid target, ignore
+    cmp r4 -1
+    je loop
+
+    # Start Drag
+    mov r5 1
+    mov r6 r4 # Drag ID
+
+    # Save Mouse Pos temporarily
+    mov r11 r2
+    mov r12 r3
+
+    # Resolve Window Rect for Offset
+    mov r1 r6 
+    syscall 79 # ITOA(r1) -> writes ID to input_buffer
+    
+    syscall 77 # GET_VEC4(Implicit Buffer) -> r1=X, r2=Y, r3=W, r4=H
+
+    # Save Width/Height for updating later
+    mov r9 r3 
+    mov r10 r4
+
+    # OffsetX = MouseX - WinX
+    sub r7 r11 r1
+    # OffsetY = MouseY - WinY
+    sub r8 r12 r2
+    
+    jmp loop
+
+on_mouse_up:
+    # If we were dragging, stop
+    mov r5 0
+    mov r6 -1
+
+    # Check for Click Event (Up confirms Click)
+    # If we didn't drag extensively? (Standard Click Logic)
+    # For now, simplistic: Any MouseUp on a target triggers Binding Check
+    
+    # Target in r4 might be stale from Poll? No, Poll returns current target.
+    # But MouseUp event has target.
+    # r4 from Poll.
+    
+    cmp r4 -1
+    je loop
+    
+    # Execute Binding (if any)
+    mov r1 r4
+    syscall 81 # SYS_EXEC_BINDING(NodeID)
+    
+    jmp loop
+
+on_mouse_move:
+    # If not dragging, ignore
+    cmp r5 1
+    jne loop
+    
+    # Calculate New Pos: X = MouseX - OffsetX
+    sub r1 r2 r7 # New X
+    sub r2 r3 r8 # New Y
+    
+    # Setup for Update: Need X, Y, W, H in r1..r4
+    # But first, generate ID string in buffer
+    
+    mov r11 r1 # Save NewX
+    mov r12 r2 # Save NewY
+    
+    # Need to get W/H again? Or assume stored?
+    # We stored r9/r10 as W/H in MouseDown?
+    # Check above... yes: mov r9 r3, mov r10 r4.
+    
+    mov r1 r6
+    syscall 79 # ITOA(r1) -> input_buffer = ID
+    
+    # Restore params
+    mov r1 r11 # X
+    mov r2 r12 # Y
+    mov r3 r9  # W
+    mov r4 r10 # H
+    
+    syscall 78 # UPDATE_RECT(Implicit Buffer + Regs)
+    
+    jmp loop

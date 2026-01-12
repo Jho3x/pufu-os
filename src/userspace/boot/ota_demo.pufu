@@ -6,8 +6,8 @@
 (write) "Connecting to Update Server..."
 
 # Download to /tmp/pufu_update.so
-# Note: In real simulation we point to localhost:8001
-(download_update) "http://localhost:8001/socket_arm_net.so.bak"
+# Real GitHub OTA
+(download_update) "https://raw.githubusercontent.com/Jho3x/pufu-os/main/bin/drivers/socket_arm_net.so"
 
 (write) "Download Complete. Verifying..."
 (sleep) 1000

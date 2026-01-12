@@ -1,0 +1,42 @@
+_pufu::init::trinity_demo.pufu
+"""Comienza una declaracion de codigo pufu.
+
+Este podria o no ser un codigo a la mitad de un archivo de texto,
+por tanto se deberia ignorar si es leido como texto.
+
+Sin embargo si es leido como codigo la etiqueta pufu::init indica el inicio.
+Automaticamente pufu::init instancia un nodo app que queda instanciado en Aphi.
+
+Luego se retorna a este archivo para leer orden por orden"""
+_pufu::meow #codigo meow a continuacion
+
+# variables externas
+path_media = "media/"
+sphere_texture = path_media+"sphere.png"
+skybox_texture = path_media+"skymesh.png"
+
+# declaracion de objetos
+gear = "engranaje" , window = "ventana" , space = "espacio"
+camera = "camara" , light = "luz"
+text3D = "texto", sphere = "esfera", emitter = "fuego", skybox = "skybox"
+
+# declaracion de propiedades
+texto.set(string: "Pufu 3D")
+espacio.add("cubo, esfera, luz, camara, fuego, texto")
+espacio.set(camera:"camara")
+ventana.set(rectangle:"480*320", space:"espacio")
+
+# declaracion de propiedades de objetos en escena
+# declaracion de propiedades de objetos en escena
+cubo.set(pos:(0, 0, 0), type:"skymesh", scale:100, texture:"media/skymesh.png")
+esfera.set(pos:(-2, 0, 0), type:"sphere", texture:"media/sphere.png", behavior:"rotate_y")
+luz.set(pos:(1, 6, 1), color:"white")
+fuego.set(pos:(2, 0, 0), type:"fire")
+texto.set(pos:(0, 1, 0), type:"follow")
+camara.set(pos:(0, 0, -10), type:"look_at")
+#
+# declaracion de control del gear
+engranaje.set(space:"espacio", window:"ventana")
+engranaje.init()
+
+_pufu::stop

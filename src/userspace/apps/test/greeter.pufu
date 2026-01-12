@@ -1,0 +1,7 @@
+# Greeter App (Headless Controller)
+# Simply prints a greeting to stdout.
+
+start:
+    mov r1 1
+    syscall 1 # WRITE "Hello from the Controller!"
+    syscall 0 # EXIT

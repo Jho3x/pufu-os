@@ -1,0 +1,85 @@
+# Session Manager
+# Handles authentication and session startup
+
+label start
+    # Clear screen (simulated by newlines)
+    syscall (write) ""
+    syscall (write) ""
+    
+    # Display Welcome Art
+    syscall (cat) "/home/joel/git/pufu-os/welcome.pufu"
+    syscall (write) ""
+    
+    # Simple Wait (Simulation of boot delay)
+    syscall (sleep) 500
+
+label login_loop
+    syscall (write) "=== SESSION MANAGER ==="
+    
+    # Prompt Username
+    syscall (write) "User:"
+    label wait_user
+    syscall (sleep) 10
+    mov r0 0
+    syscall (console_input) r0
+    cmp r0 1
+    bne wait_user
+    
+    # Validate Username
+    syscall (string_cmp) "joel"
+    cmp r0 1
+    bne login_fail
+
+    syscall (write) "Password:"
+    label wait_pass
+    syscall (sleep) 10
+    mov r0 0
+    syscall (console_input) r0
+    cmp r0 1
+    bne wait_pass
+    
+    # Validate Password
+    syscall (string_cmp) "cat"
+    cmp r0 1
+    bne login_fail
+    
+    # Success
+    syscall (write) "Access Granted."
+    syscall (write) "Welcome, Joel."
+    syscall (sleep) 800
+    
+    # Read User Configuration
+    syscall (write) "DEBUG: Reading user configuration..."
+    syscall (config_get) "mode"
+    
+    # Compare input buffer with "gui"
+    syscall (string_cmp) "gui"
+    
+    # If r0 (result) == 1, jump to GUI start
+    cmp r0 1
+    beq start_gui
+    
+    syscall (write) "DEBUG: GUI Mismatch. Falling to CLI."
+    
+    # Start CLI by default
+    syscall (write) "SessionManager: Starting CLI..."
+    syscall (exec) "src/userspace/oxide/shell.pufu"
+    
+    label hang_cli
+    syscall (sleep) 1000
+    jmp hang_cli
+
+    label login_fail
+    syscall (write) "Invalid credentials. Try again."
+    syscall (sleep) 1000
+    syscall (write) "---"
+    jmp login_loop
+
+    # Label for GUI
+    label start_gui
+    syscall (write) "SessionManager: Starting GUI..."
+    syscall (exec) "src/userspace/apps/liquid/desktop.pufu"
+    
+    label hang_gui
+    syscall (sleep) 1000
+    jmp hang_gui

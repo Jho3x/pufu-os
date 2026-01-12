@@ -1,0 +1,103 @@
+# Pufu Desktop Environment (Liquid GUI)
+# Initialized by Session Manager on 'gui' mode
+
+syscall (write) "Liquid: Initializing Desktop Environment..."
+
+# Initialize Trinity Engine
+syscall (trinity_init)
+
+# Spawning UI Components (Phase 13)
+
+# 1. Desktop Root Frame (Immutable Background)
+syscall (create_ui_window) "DesktopFrame"
+# Pos: 0,0, Size: 800,600
+syscall (clear_buffer)
+syscall (prepend_string) "0 0 800 600"
+syscall (trinity_set_vec4) "DesktopFrame rect"
+# Bg Color (Dark Slate Blue)
+syscall (clear_buffer)
+syscall (prepend_string) "0.1 0.1 0.2"
+syscall (trinity_set_vec3) "DesktopFrame bg_color"
+# Set Immutable (Movable = False)
+syscall (clear_buffer)
+syscall (prepend_string) "false"
+syscall (trinity_set_string) "DesktopFrame movable"
+
+# 2. Taskbar Background
+syscall (write) "Liquid:# Spawn Refactored Taskbar (Meow)
+syscall (spawn) "src/userspace/apps/liquid/components/taskbar.pufu"
+
+# 3. Title Label "Pufu Desktop"
+syscall (spawn) "src/userspace/apps/liquid/components/title_label.pufu"
+
+# 4. Taskbar Buttons (Merged into Taskbar.meow)
+# syscall (spawn) "src/userspace/apps/liquid/components/taskbar_buttons.pufu"
+
+# 5. Settings Icon (Gear)
+syscall (spawn) "src/userspace/apps/liquid/components/settings_icon.pufu"
+
+# 6. Miau Button (Rightmost)
+syscall (spawn) "src/userspace/apps/liquid/components/miau_button.pufu"
+
+# 7. Window Manager (Mouse Interaction)
+syscall (spawn) "src/userspace/services/window_manager.pufu"
+
+# Small delay to ensure node creation
+syscall (sleep) 200
+
+label engine_loop
+    # Create Main Window (Title, Width, Height)
+    # If window exists, this will resume it!
+    # Returns 0 (Shutdown/Close) or 1 (Background)
+    syscall (window_init) "Pufu Desktop"
+    
+    # Non-Blocking Event Loop
+    label event_loop
+    syscall (trinity_step)
+    
+    # Check Return Code (r0)
+    # 0 = Close, 1 = Continue, 2 = Background
+    cmp r0 0
+    beq shutdown
+    cmp r0 2
+    beq go_bg
+    
+    # Poll Trinity Events
+    # Syscall 75: Poll Event. R1=Type, R4=TargetID
+    syscall (75)
+    
+    # Check if event occurred (Type != 0)
+    cmp r1 0
+    beq no_event
+    
+    # Check for Mouse Down (Type 4)
+    cmp r1 4
+    bne no_event
+    
+    # Execute Binding for Target (R4)
+    syscall (exec_binding) r4
+    
+    label no_event
+    
+    # Yield to let other tasks run (Window Manager!)
+    syscall (sleep) 16
+    jmp event_loop
+    
+    label shutdown
+    syscall (write) "Liquid: Desktop Session Ended. Shutting down system..."
+
+    # Send Shutdown Signal to Task Manager (ID 4)
+    syscall (clear_buffer)
+    syscall (prepend_string) "shutdown"
+    syscall (ipc_broadcast_from_buffer)
+
+    syscall (exit) 0
+
+label go_bg
+    syscall (write) "Liquid: Backgrounding Session..."
+    
+    # Spawn CLI shell (Oxide) so user can interact
+    syscall (spawn) "src/userspace/oxide/shell.pufu"
+    
+    # Exit to free task slot, allowing generic resume later
+    syscall (exit) 0

@@ -1,0 +1,49 @@
+# Taskbar Buttons Component
+# Adds Beige (Version), Orange (Alba), and Turquoise (Closer) buttons
+
+# 1. Beige Button (Version)
+# Pos: 530, Y: 5, W: 30, H: 30
+syscall (set_buffer) "530 5 30 30"
+syscall (create_ui_button) "BtnBeige"
+# Color (Beige)
+syscall (set_buffer) "0.96 0.96 0.86"
+syscall (trinity_set_vec3) "BtnBeige color_off"
+syscall (set_buffer) "0.8 0.8 0.7"
+syscall (trinity_set_vec3) "BtnBeige color_on"
+syscall (set_buffer) "V"
+syscall (trinity_set_string) "BtnBeige label"
+# Binding
+syscall (set_buffer) "src/userspace/apps/test/greeter_gui.pufu"
+syscall (bind_event) "BtnBeige"
+
+# 2. Orange Button (Alba)
+# Pos: 570, Y: 5, W: 30, H: 30
+syscall (set_buffer) "570 5 30 30"
+syscall (create_ui_button) "BtnOrange"
+# Color (Orange)
+syscall (set_buffer) "1.0 0.64 0.0"
+syscall (trinity_set_vec3) "BtnOrange color_off"
+syscall (set_buffer) "0.8 0.5 0.0"
+syscall (trinity_set_vec3) "BtnOrange color_on"
+syscall (set_buffer) "A"
+syscall (trinity_set_string) "BtnOrange label"
+# Binding
+syscall (set_buffer) "src/userspace/apps/ai/alba_gui.pufu"
+syscall (bind_event) "BtnOrange"
+
+# 3. Turquoise Button (Closer)
+# Pos: 610, Y: 5, W: 30, H: 30
+syscall (set_buffer) "610 5 30 30"
+syscall (create_ui_button) "BtnTurquoise"
+# Color (Turquoise)
+syscall (set_buffer) "0.25 0.88 0.82"
+syscall (trinity_set_vec3) "BtnTurquoise color_off"
+syscall (set_buffer) "0.2 0.7 0.65"
+syscall (trinity_set_vec3) "BtnTurquoise color_on"
+syscall (set_buffer) "X"
+syscall (trinity_set_string) "BtnTurquoise label"
+# Binding
+syscall (set_buffer) "src/userspace/services/closer.pufu"
+syscall (bind_event) "BtnTurquoise"
+
+syscall (exit) 0

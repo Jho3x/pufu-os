@@ -1,0 +1,21 @@
+# Component: Miau Button
+syscall (clear_buffer)
+syscall (prepend_string) "690 5 100 30"
+syscall (create_ui_button) "MiauButton"
+
+# Colors (Specific Blue)
+syscall (clear_buffer)
+syscall (prepend_string) "0.46 0.67 0.86"
+syscall (trinity_set_vec3) "MiauButton color_off"
+
+syscall (clear_buffer)
+syscall (prepend_string) "0.20 0.51 0.80"
+syscall (trinity_set_vec3) "MiauButton color_on"
+
+# Label
+syscall (clear_buffer)
+syscall (prepend_string) "Miau!"
+syscall (trinity_set_string) "MiauButton label"
+
+
+syscall (exit)

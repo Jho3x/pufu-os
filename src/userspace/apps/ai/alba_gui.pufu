@@ -1,0 +1,40 @@
+# Alba GUI (Orange App)
+# Displays "Analyzing patterns..."
+
+syscall (write) "AlbaGUI: Initializing Interface..."
+
+# 1. Create Frame
+syscall (create_ui_window) "AlbaWindow"
+# Pos: 400, 300, Size: 300, 150 (Offset from Greeter)
+syscall (clear_buffer)
+syscall (prepend_string) "400 300 300 150"
+syscall (trinity_set_vec4) "AlbaWindow rect"
+# Color (Dark Orange)
+syscall (clear_buffer)
+syscall (prepend_string) "0.8 0.4 0.0"
+syscall (trinity_set_vec3) "AlbaWindow bg_color"
+syscall (clear_buffer)
+syscall (prepend_string) "Alba AI"
+syscall (trinity_set_string) "AlbaWindow title"
+
+# 2. Status Label
+syscall (create_ui_button) "AlbaLabel"
+# Pos: 420, 350, W: 260, H: 40
+syscall (clear_buffer)
+syscall (prepend_string) "420 350 260 40"
+syscall (trinity_set_vec4) "AlbaLabel rect"
+# Match BG
+syscall (clear_buffer)
+syscall (prepend_string) "0.8 0.4 0.0"
+syscall (trinity_set_vec3) "AlbaLabel color_off"
+syscall (trinity_set_vec3) "AlbaLabel color_on"
+
+# Text
+syscall (clear_buffer)
+syscall (prepend_string) "Analyzing patterns..."
+# Set property (uses input buffer)
+syscall (trinity_set_string) "AlbaLabel label"
+
+label loop
+    syscall (sleep) 1000
+    jmp loop

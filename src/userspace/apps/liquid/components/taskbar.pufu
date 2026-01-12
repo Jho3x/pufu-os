@@ -1,0 +1,11 @@
+# Component: Taskbar (Process)
+# Owners: ui/taskbar_layout.pufu
+
+syscall (trinity_load_meow) "src/userspace/apps/liquid/components/taskbar_layout.pufu"
+syscall (write) "Taskbar: UI Loaded (Meow)"
+
+# Keep process alive to maintain window ownership
+label loop
+    syscall (sleep) 1000
+    jmp loop
+

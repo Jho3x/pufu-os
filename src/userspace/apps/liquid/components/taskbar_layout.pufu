@@ -1,0 +1,19 @@
+# Taskbar Layout (Meow)
+# Defines the visual structure of the Taskbar
+
+# Main Taskbar Window
+TB = "Taskbar"
+TB.create(type: "Window")
+TB.set(rect: "0 0 800 40", color: "0.15 0.15 0.15")
+
+# Start Button
+Start = "StartBtn"
+Start.create(type: "Button")
+Start.set(rect: "5 5 30 30", color: "orange", label: "P")
+Start.set(onclick: "spawn src/userspace/apps/liquid/menu.pufu")
+
+# Terminal Button
+Term = "TermBtn"
+Term.create(type: "Button")
+Term.set(rect: "40 5 30 30", color: "gray", label: "T")
+Term.set(onclick: "spawn src/userspace/apps/liquid/oxide.pufu")

@@ -1,0 +1,48 @@
+# Node Boot Test (Ideal Architecture)
+# Simulates the full Peripheral-Driven Boot Sequence
+
+# 1. Bootloader Phase
+syscall (write) "[Bootloader] Igniting System..."
+syscall (write) "[Bootloader] Spawning TaskManager..."
+# Simulating TaskManager logic inline for test simplicity, normally a separate process
+syscall (write) "[TaskManager] Supervisor Started."
+syscall (write) "[TaskManager] Signaling success to Bootloader..."
+syscall (write) "[Bootloader] Handshake received. Terminating."
+
+# 2. System Load Phase
+syscall (write) "[TaskManager] Spawning VirtualBus..."
+syscall (write) "[VirtualBus] Bus Active."
+
+# 3. Peripheral Discovery (The "System" list)
+syscall (write) "[System] Loading Peripherals..."
+
+# 3.1 Trinity (Display)
+syscall (write) "[System] Loading Trinity (Graphics)..."
+syscall (write) "[Trinity] Logic: Searching for Display..."
+syscall (sleep) 100 # Sim detection time
+syscall (write) "[Trinity] Event: Display Found (1920x1080)."
+
+# 3.2 I/O
+syscall (write) "[System] Loading Audio Driver..."
+syscall (write) "[Audio] Ready."
+syscall (write) "[System] Loading Input Driver..."
+syscall (write) "[Input] Keyboard/Mouse Connected."
+
+# 3.3 Confirmation
+syscall (write) "[Trinity] Signal: HAL Ready."
+
+# 4. Interface Phase
+syscall (write) "[TaskManager] HAL Ready confirmed. Starting Oxide TTY..."
+syscall (write) "[Oxide] TTY Attached to Trinity Window."
+syscall (write) "[Oxide] Flushing Boot Logs to Screen..."
+syscall (write) "----------------------------------------"
+syscall (write) "       P U F U   O S   v 0 . 4      "
+syscall (write) "----------------------------------------"
+
+# 5. Session Phase
+syscall (write) "[TaskManager] Spawning SessionManager..."
+syscall (write) "[SessionManager] Starting Login Prompt..."
+
+# Test End
+syscall (write) "TEST PASSED: Ideal Boot Sequence Complete."
+syscall (exit)

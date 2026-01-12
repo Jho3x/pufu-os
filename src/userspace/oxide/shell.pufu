@@ -1,0 +1,116 @@
+# Oxide Async Shell (v2.1)
+# Modularized System Shell
+
+# Oxide Async Shell (v2.1)
+# Modularized System Shell
+
+# Init
+syscall (write) "Oxide 2.1: Shell System Ready."
+
+# 1. Get Username (Store in buffer)
+syscall (config_get) "username"
+# Save username to r8 for persistent storage? No, store prompt string.
+# We don't have str_concat syscall yet? 
+# We have prepend_string.
+# We need to build: username + "@pufu |tws " + active_tws + "|> "
+# Let's assume username is in input_buffer now.
+
+# Build prompt: "@pufu |tws 0|> "
+syscall (prepend_string) "@pufu |tws 0|> "
+# No, prepends to FRONT. 
+# Usage: prepend_string "PREFIX" -> "PREFIX" + Buffer
+# If buffer has "joel", we want "joel" + suffix.
+# We need append_string? Or just use prepend carefully.
+# Wait, input_buffer has "joel".
+# We want "joel@pufu |tws 0|> "
+# Currently we only have PREPEND.
+# So we can't easily append suffix.
+# Workaround:
+# 1. Store username in temp file? Too slow.
+# 2. Add SYS_APPEND_STRING?
+# 3. Use C-side formatting syscall for prompt?
+
+# Let's add SYS_STR_BUILD or similar? 
+# Or just implement logic in "set_prompt" to take username?
+# No, shell should be generic.
+
+# Let's use simple prompt for now: "joel>"
+# prepend "joel" to "> " -> "joel> "
+syscall (prepend_string) "> "
+# Now buffer has "> joel" (Wait, prepend adds prefix)
+# If buffer = "joel", prepend "> " -> "> joel". Wrong order.
+# We want "joel" THEN "> ".
+# So we need APPEND.
+
+# CHECKING SYSCALLS...
+# We don't have append.
+# I'll implement SYS_APPEND_STRING (ID 12) real quick in Dispatch/SyscallIDs.
+# It's trivial and necessary.
+
+# TEMP: Hardcode until append is ready.
+syscall (set_prompt) "joel@pufu |tws 0|> "
+
+syscall (write) "System: Event Loop Active."
+
+# Registers:
+# r0 = Temporary / Syscall Result
+# r1 = IPC Status
+# r2 = Input Status
+# r12 = TWS ID (0)
+
+label loop
+    # 1. Poll IPC
+    mov r1 0
+    syscall (ipc_read) r1
+    cmp r1 1
+    beq handle_ipc
+
+    # 2. Poll Input
+    mov r2 0
+    syscall (console_input) r2
+    cmp r2 1
+    beq handle_key
+
+    # 3. Idle Sleep
+    syscall (sleep) 10
+    jmp loop
+
+label handle_ipc
+    # Log directly (TWS system handles output area)
+    syscall (log_buffer)
+    jmp loop
+
+label handle_key
+    # Parse command in input_buffer
+    syscall (parse_command) r0
+
+    # r0 = 1 -> exec active
+    cmp r0 1
+    beq do_exec
+
+    # r0 = 6 -> tws switch
+    cmp r0 6
+    beq do_tws
+
+    # Empty/Unknown -> Clear buffer but KEEP prompt (set_prompt persists)
+    syscall (clear_buffer)
+    jmp loop
+
+label do_exec
+    # Spawn background task
+    syscall (spawn_from_buffer)
+    # Log job start
+    syscall (write) "[ok] (Job Started)"
+    syscall (clear_buffer)
+    jmp loop
+
+label do_shutdown
+    syscall (spawn) "src/userspace/oxide/system_functions/shutdown.pufu"
+    jmp loop
+
+label do_tws
+    # Input buffer contains ID (e.g. "1")
+    syscall (prepend_string) "src/userspace/oxide/system_functions/tws_switch.pufu ( "
+    syscall (spawn_from_buffer)
+    syscall (clear_buffer)
+    jmp loop

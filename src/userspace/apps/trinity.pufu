@@ -1,0 +1,32 @@
+_paw::init
+# Trinity: UI Compositor
+# Initializes the graphical environment
+
+syscall (write) "Trinity: Starting Graphics Engine..."
+
+# Initialize Window (512x768)
+(window_init) "512" "768"
+
+# Load Cube Model (ID will be 0)
+(window_load_model) "res/cube.glb"
+
+# Main Loop
+loop:
+    # Clear screen (Dark Green for 3D test)
+    (window_clear) "0.0" "0.2"
+    
+    # Draw Cube (ID 0) at 0,0,0 with scale 1.0
+    # Args: id, x, y, z, scale
+    (window_draw_model) "0" "0 0 0 1.0"
+    
+    # Swap buffers
+    (window_swap)
+    
+    # Poll events
+    (window_poll)
+    
+    # Loop
+    (jump) "loop"
+
+syscall (write) "Trinity: Shutting down."
+_paw::end

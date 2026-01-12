@@ -1,0 +1,28 @@
+# TWS Switch Utility
+# Usage: tws <id>
+
+# Args are passed in registers/buffer?
+# Shell: prepend "tws_switch.pufu ( " + ID
+# So args are in argument buffer "( ID" ?
+# Default loader parses args ( ) ?
+
+# Just use raw input buffer for now if simple.
+# Wait, shell prepends path. 
+# `spawn_from_buffer` loads the node.
+# The node can access its args.
+
+syscall (write) "Switching TWS..."
+
+# Switch Logic
+# Arg parsing is complex in pufu scripts currently without library.
+# But we added `SYS_TWS_SWITCH_ARGS` (ID 51).
+# This syscall parses `node->args`.
+
+syscall (tws_switch_args) ""
+# Empty string because args are implicit in node state?
+# Or we pass args in reg?
+# `dispatch.c`: `pufu_tws_switch(atoi(node->args));`
+# So it reads node->args directly.
+
+syscall (write) "Switched."
+syscall (exit)
