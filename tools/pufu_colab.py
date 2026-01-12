@@ -4,7 +4,7 @@ Pufu OS - Google Colab Launcher
 Running this script in a Colab cell will:
 1. Compile the OS.
 2. Launch the Web Backend.
-3. Expose the Viewport via LocalTunnel (Public URL).
+3. Expose the Viewport via NGROK (Reliable).
 """
 
 import os
@@ -12,9 +12,11 @@ import subprocess
 import time
 import sys
 import socket
+import getpass
 
 def install_deps():
     print("Installing dependencies...")
+    subprocess.run(["pip", "install", "pyngrok"], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
 
 def compile_os():
     print("Compiling Pufu OS...")
@@ -43,47 +45,43 @@ def wait_for_server(port, timeout=30):
     print("\nTimeout waiting for server.")
     return False
 
-def start_localtunnel(port):
+def start_ngrok(port):
     print("\n" + "="*40)
-    print("PUFU OS PUBLIC CLOUD ACCESS")
+    print("PUFU OS PUBLIC CLOUD ACCESS (NGROK)")
     print("="*40)
     
-    # 1. Install localtunnel
-    if subprocess.run(["which", "lt"], stdout=subprocess.DEVNULL).returncode != 0:
-        print("Installing LocalTunnel (npm)...")
-        # Ensure npm is installed (Colab usually has it)
-        subprocess.run(["npm", "install", "-g", "localtunnel"], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
-
-    # 2. Get Public IP for Password (Tunnel verification)
-    try:
-        ip = subprocess.check_output(["curl", "-s", "ipv4.icanhazip.com"]).decode().strip()
-        print(f"** IMPORTANT **: The Password is: {ip}")
-    except:
-        print("Could not fetch IP (Password).")
-
-    # 3. Start Tunnel
-    print("Starting Tunnel...")
-    # lt runs in foreground, so we background it
-    lt_proc = subprocess.Popen(["lt", "--port", str(port)], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+    # 1. Ask for Token
+    print("Ngrok requires a free Authtoken to be reliable.")
+    print("Get one here: https://dashboard.ngrok.com/get-started/your-authtoken")
+    token = getpass.getpass("Enter your Ngrok Authtoken: ")
     
-    # Read the URL from stdout (it prints "your url is: ...")
-    import re
-    while True:
-        line = lt_proc.stdout.readline().decode()
-        if "your url is" in line:
-            url = line.split("is:")[1].strip()
-            print(f"Click here to access Pufu OS: {url}")
-            print(f"(Don't forget the password: {ip})")
-            print("="*40 + "\n")
-            break
-        if not line and lt_proc.poll() is not None:
-            print("LocalTunnel failed to start.")
-            break
+    if not token:
+        print("No token provided. Cannot start tunnel.")
+        return
+
+    # 2. Setup Ngrok
+    from pyngrok import ngrok, conf
+    conf.get_default().auth_token = token
+    
+    # 3. Connect
+    print("Starting Tunnel...")
+    try:
+        public_url = ngrok.connect(port).public_url
+        print(f"\nClick here to access Pufu OS: {public_url}")
+        print("="*40 + "\n")
+        
+        # Keep alive
+        while True:
+            time.sleep(1)
+    except Exception as e:
+        print(f"Ngrok Error: {e}")
 
 def main():
     if not os.path.exists("Makefile"):
         print("Error: Run this from the repository root.")
         return
+
+    install_deps()
 
     # Cleanup previous instances
     print("Cleaning up old processes...")
@@ -106,18 +104,16 @@ def main():
         proc.terminate()
         return
 
-    # Use LocalTunnel instead of Colab Proxy
-    start_localtunnel(8080)
+    # Use Ngrok
+    start_ngrok(8080)
     
     try:
-        while True:
-            time.sleep(1)
-            if proc.poll() is not None:
-                print("Pufu OS stopped.")
-                break
+        proc.wait()
     except KeyboardInterrupt:
         print("Stopping...")
         proc.terminate()
+        from pyngrok import ngrok
+        ngrok.kill()
 
 if __name__ == "__main__":
     main()
