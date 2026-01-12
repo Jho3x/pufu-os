@@ -102,56 +102,53 @@ def wait_for_server(port, proc, timeout=30):
     print("\nTimeout waiting for server (Is the port blocked?).")
     return False
 
-def start_ngrok(port, proc):
-    print("\n" + "="*40)
-    print("PUFU OS PUBLIC CLOUD ACCESS (NGROK)")
-    print("="*40)
-    
-    # 1. Ask for Token
-    print("Ngrok requires a free Authtoken to be reliable.")
-    print("Get one here: https://dashboard.ngrok.com/get-started/your-authtoken")
-    token = getpass.getpass("Enter your Ngrok Authtoken: ")
-    
-    if not token:
-        print("No token provided. Cannot start tunnel.")
-        return
+def start_ngrok(port, proc, auth_token):
+    # Set the token programmatically
+    ngrok.set_auth_token(auth_token)
 
-    # 2. Setup Ngrok
-    from pyngrok import ngrok, conf, exception
-    conf.get_default().auth_token = token
-    
-    # 3. Connect
-    print("Starting Tunnel...")
+    # Open a TCP tunnel to the web server
+    # Note: HTTP tunnel is better for browser viewing, but TCP is fine if using raw socket.
+    # Actually for web backend we want http.
+    public_url = ngrok.connect(port, "http").public_url
+    print(f"\n========================================")
+    print(f"PUFU OS PUBLIC CLOUD ACCESS (NGROK)")
+    print(f"========================================")
+    print(f"Click here to access Pufu OS: {public_url}")
+    print(f"========================================\n")
+
     try:
-        public_url = ngrok.connect(port).public_url
-        print(f"\nClick here to access Pufu OS: {public_url}")
-        print("="*40 + "\n")
-        
-        # Keep alive & Monitor Process
+        # Keep the tunnel alive and monitor process
         while True:
             time.sleep(1)
             if proc.poll() is not None:
-                print("\n[!] Pufu OS has stopped unexpectedly!")
-                print("Exit Code:", proc.returncode)
+                print(f"\n[Monitor] Pufu OS crashed with exit code {proc.returncode}")
+                # Print stderr if we can capture it (already streaming to console)
                 break
-    except exception.PyngrokNgrokError as e:
-        print(f"Ngrok Error: {e}")
-    except Exception as e:
-        print(f"General Error: {e}")
+    except KeyboardInterrupt:
+        print("Shutting down Ngrok...")
     finally:
         ngrok.kill()
 
-def network_manager(proc):
+def network_manager(proc, auth_token):
     # Wait for the service to be ready
     if wait_for_server(8081, proc):
-        # Use Ngrok
-        start_ngrok(8081, proc)
+        # Use Ngrok with pre-collected token
+        start_ngrok(8081, proc, auth_token)
     else:
         print("Error: Pufu OS Web Backend failed to start.")
 
 def main():
     if not os.path.exists("Makefile"):
         print("Error: Run this from the repository root.")
+        return
+        
+    # 1. Ask for Ngrok Token FIRST to avoid input conflicts later
+    print("=== Ngrok Configuration ===")
+    print("Ngrok requires a free Authtoken to be reliable.")
+    print("Get one here: https://dashboard.ngrok.com/get-started/your-authtoken")
+    auth_token = input("Enter your Ngrok Authtoken: ").strip()
+    if not auth_token:
+        print("Error: Token required.")
         return
 
     install_deps()
@@ -169,8 +166,8 @@ def main():
     
     proc = run_os()
     
-    # Start Network Manager in Background
-    t_net = threading.Thread(target=network_manager, args=(proc,))
+    # Start Network Manager in Background (Pass Token)
+    t_net = threading.Thread(target=network_manager, args=(proc, auth_token))
     t_net.daemon = True
     t_net.start()
     
