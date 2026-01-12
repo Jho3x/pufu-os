@@ -13,6 +13,7 @@ import time
 import sys
 import socket
 import getpass
+from pyngrok import ngrok, conf, exception
 
 def install_deps():
     print("Installing dependencies...")
