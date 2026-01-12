@@ -7,13 +7,15 @@ Solamente es una herramienta pequeña y sencilla para poder usar un motor 3d y h
 
 Para usar Pufu se puede usar o bien un google colab o bien la descarga local.
 Paso a decir los pasos para ambos y mas abajo voy a explicar los detalles de Pufu.
-
+.
+.
+.
 **" 1 Pasos para Google Colab"**
 
-1. Para usar Pufu en Google Colab, necesitas una cuenta en ngrok (https://dashboard.ngrok.com/get-started/your-authtoken) ese enlace lleva al autotoken. Cuando tengas una cuenta vas a la barra izquierda donde dice "getting started" -> "your authtoken" -> "copy authtoken".
+1.a Para usar Pufu en Google Colab, necesitas una cuenta en ngrok (https://dashboard.ngrok.com/get-started/your-authtoken) ese enlace lleva al autotoken. Cuando tengas una cuenta vas a la barra izquierda donde dice "getting started" -> "your authtoken" -> "copy authtoken".
 El autotoken es una contraseña segura que te da ngrok para que puedas usarlo en el colab y ver la pantalla de Pufu OS.
 
-2. Despues vas a ejecutar estos comandos en el colab:
+1.b Despues vas a ejecutar estos comandos en el colab:
 ```bash
 # esto es por si ya tienes un pufu-os en el colab y queres borrarlo para volver a compilar
 !rm -rf pufu-os
@@ -122,8 +124,9 @@ Cuando Pufu es terminado aparece algo asi:
 [Kernel] FATAL ERROR: Signal 11 caught! # estos errores son normales, solo dicen que no se cerro correctamente el kernel
 [Kernel] Dumping Crash Log to 'crash.log'...
 ```
-
-
+.
+.
+.
 
 **"2 Pasos para ejecutar Pufu OS localmente"**
 
@@ -134,7 +137,9 @@ Cuando Pufu es terminado aparece algo asi:
 ```bash
 make run
 ```
-
+.
+.
+.
 
 
 ## 📚 Documentation
