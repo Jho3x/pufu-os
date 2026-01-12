@@ -134,6 +134,10 @@ PufuFramebuffer *pufu_video_get_fb(void) {
         0) {
       listen(server_socket, 3);
       pthread_create(&server_thread_id, NULL, server_thread_func, NULL);
+      printf("[WebBackend] SUCCESS: Listening on port %d\n", WEB_PORT);
+    } else {
+      perror("[WebBackend] FATAL: Bind failed");
+      exit(1);
     }
   }
   return &g_web_fb;

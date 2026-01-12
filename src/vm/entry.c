@@ -109,7 +109,8 @@ int main(int argc, char **argv) {
   pufu_logger_init();
 
   // Disable stdout buffering for responsive terminal
-  setbuf(stdout, NULL);
+  // Disable stdout buffering for responsive terminal in Colab
+  setvbuf(stdout, NULL, _IONBF, 0);
 
   // Mostrar mensaje de inicio
   pufu_log("\n=== Pufu Bootloader ===");
