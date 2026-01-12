@@ -52,6 +52,21 @@ def bridge_port():
         print("instead of !python3.")
         print("!"*40 + "\n")
 
+def wait_for_server(port, timeout=30):
+    print(f"Waiting for Pufu OS Web Backend on port {port}...")
+    start_time = time.time()
+    import socket
+    while time.time() - start_time < timeout:
+        try:
+            with socket.create_connection(("localhost", port), timeout=1):
+                print("Server Ready!")
+                return True
+        except (socket.timeout, ConnectionRefusedError):
+            time.sleep(0.5)
+            # print(".", end="", flush=True) # Optional clutter
+    print("\nTimeout waiting for server.")
+    return False
+
 def main():
     if not os.path.exists("Makefile"):
         print("Error: Run this from the repository root.")
@@ -75,6 +90,12 @@ def main():
         print("Pufu OS exited prematurely.")
         if proc.stderr:
             print(proc.stderr.read().decode())
+        return
+
+    # Wait for the service to be ready
+    if not wait_for_server(8080):
+        print("Error: Pufu OS Web Backend failed to start.")
+        proc.terminate()
         return
 
     bridge_port()
