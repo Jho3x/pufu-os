@@ -44,8 +44,13 @@ def bridge_port():
         proxy_url = eval_js("google.colab.kernel.proxyPort(8080)")
         print(f"Click here to view Pufu OS: {proxy_url}")
         print("="*40 + "\n")
-    except ImportError:
-        print("Not running in Google Colab? View at http://localhost:8080/")
+    except (ImportError, AttributeError):
+        print("\n" + "!"*40)
+        print("ERROR: Could not connect to Colab Kernel.")
+        print("Please run this script using the magic command:")
+        print("    %run tools/pufu_colab.py")
+        print("instead of !python3.")
+        print("!"*40 + "\n")
 
 def main():
     if not os.path.exists("Makefile"):

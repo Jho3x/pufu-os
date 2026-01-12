@@ -12,7 +12,7 @@ This guide explains how to run Pufu OS inside Google Colab using the new Web Bac
    ```
 3. **Run the Launcher**:
    ```python
-   !python3 tools/pufu_colab.py
+   %run tools/pufu_colab.py
    ```
 4. **Click the Link**: The script will output a `proxyPort` URL. Click it to open the Pufu OS Desktop in your browser.
 
