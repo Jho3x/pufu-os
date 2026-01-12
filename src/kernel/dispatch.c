@@ -17,9 +17,9 @@ int pufu_syscall_dispatch(PufuNodeSystem *sys, PufuNode *node,
                           PufuInstruction *inst) {
   // Debug trace
   if (inst->syscall_id != SYS_WRITE) { // Ignore write/print_char spam
-    printf("[KERNEL] Syscall Dispatch: ID=%d (Op=%d) Node='%s'\n",
-           inst->syscall_id, inst->opcode,
-           node->filename ? node->filename : "unknown");
+    // printf("[KERNEL] Syscall Dispatch: ID=%d (Op=%d) Node='%s'\n",
+    //        inst->syscall_id, inst->opcode,
+    //        node->filename ? node->filename : "unknown");
   }
 
   // Handle Core Syscalls via sys_core module
