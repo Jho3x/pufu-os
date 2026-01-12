@@ -8,7 +8,7 @@ Solamente es una herramienta pequeña y sencilla para poder usar un motor 3d y h
 Para usar Pufu se puede usar o bien un google colab o bien la descarga local.
 Paso a decir los pasos para ambos y mas abajo voy a explicar los detalles de Pufu.
 
-**"Pasos para Google Colab"**
+**" 1 Pasos para Google Colab"**
 
 1. Para usar Pufu en Google Colab, necesitas una cuenta en ngrok (https://dashboard.ngrok.com/get-started/your-authtoken) ese enlace lleva al autotoken. Cuando tengas una cuenta vas a la barra izquierda donde dice "getting started" -> "your authtoken" -> "copy authtoken".
 El autotoken es una contraseña segura que te da ngrok para que puedas usarlo en el colab y ver la pantalla de Pufu OS.
@@ -124,7 +124,8 @@ Cuando Pufu es terminado aparece algo asi:
 ```
 
 
-**"Pasos para ejecutar Pufu OS localmente"**
+
+**"2 Pasos para ejecutar Pufu OS localmente"**
 
 1. localmente se tiene que descargar el repositorio como .zip y descomprimirlo.
 
@@ -133,6 +134,7 @@ Cuando Pufu es terminado aparece algo asi:
 ```bash
 make run
 ```
+
 
 
 ## 📚 Documentation
