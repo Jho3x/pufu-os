@@ -7,7 +7,7 @@ label start
     syscall (write) ""
     
     # Display Welcome Art
-    syscall (cat) "/home/joel/git/pufu-os/welcome.pufu"
+    syscall (cat) "welcome.pufu"
     syscall (write) ""
     
     # Simple Wait (Simulation of boot delay)
