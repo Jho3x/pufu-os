@@ -27,7 +27,7 @@ python3 tools/pufu_colab.py
 ```
 esto va a hacer que se cargue una pantalla masomenos asi:
 
-=== Ngrok Configuration ===
+```=== Ngrok Configuration ===
 Ngrok requires a free Authtoken to be reliable.
 Get one here: https://dashboard.ngrok.com/get-started/your-authtoken
 Enter your Ngrok Authtoken: ****************************** (ACA VA EL AUTOTOKEN DE NGROK)
@@ -84,7 +84,7 @@ PUFU OS PUBLIC CLOUD ACCESS (NGROK)
 ========================================
 Click here to access Pufu OS: https:// enlace a la pagina de la gui ejecutandose en el colab
 ========================================
-... (cada cierta cantidad de segundos aca se van a imprimir mensajes de status)
+... (cada cierta cantidad de segundos aca se van a imprimir mensajes de status)```
 
 
 Para cerrar Pufu OS en el colab, solo tienes que ejecutar el siguiente comando:
@@ -97,6 +97,7 @@ Aunque lo mas normal es simplemente cerrar la ventana de gui en el navegador, pa
 
 Cuando Pufu es terminado aparece algo asi:
 
+```bash
 [Input Loop Stopped] Pufu OS continues in background...
 
 === Shutting down Pufu ===
@@ -105,7 +106,7 @@ Cuando Pufu es terminado aparece algo asi:
 [TRINITY] Shutting down. Freeing payloads...
 
 [Kernel] FATAL ERROR: Signal 11 caught! # estos errores son normales, solo dicen que no se cerro correctamente el kernel
-[Kernel] Dumping Crash Log to 'crash.log'...
+[Kernel] Dumping Crash Log to 'crash.log'...```
 
 
 
