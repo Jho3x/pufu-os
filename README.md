@@ -10,22 +10,31 @@ Paso a decir los pasos para ambos y mas abajo voy a explicar los detalles de Puf
 
 **"Pasos para Google Colab"**
 
-1. Para usar Pufu en Google Colab, necesitas una cuenta en ngrok (https://dashboard.ngrok.com/get-started/your-authtoken) y solo tienes que ejecutar el siguiente comando:
+1. Para usar Pufu en Google Colab, necesitas una cuenta en ngrok (https://dashboard.ngrok.com/get-started/your-authtoken) ese enlace lleva al autotoken. Cuando tengas una cuenta vas a la barra izquierda donde dice "getting started" -> "your authtoken" -> "copy authtoken".
+El autotoken es una contraseña segura que te da ngrok para que puedas usarlo en el colab y ver la pantalla de Pufu OS.
 
+2. Despues vas a ejecutar estos comandos en el colab:
 ```bash
 # esto es por si ya tienes un pufu-os en el colab y queres borrarlo para volver a compilar
 !rm -rf pufu-os
 print("Directorio 'pufu-os' eliminado.")
+```
+```bash
 # clonamos el repositorio
 !git clone https://github.com/Jho3x/pufu-os.git
 print("Repositorio clonado.")
+```
+```bash
 # cambiamos al directorio
 !cd pufu-os
 print("Directorio cambiado.")
+```
+```bash
 # ejecutamos el script
 python3 tools/pufu_colab.py
 ```
-esto va a hacer que se cargue una pantalla masomenos asi:
+
+Esto va a hacer que se cargue una pantalla masomenos asi:
 
 ```=== Ngrok Configuration ===
 Ngrok requires a free Authtoken to be reliable.
@@ -75,6 +84,11 @@ User:
 ACA SE QUEDA ESPERANDO QUE INGRESES EL USUARIO
 Password:
 ACA SE QUEDA ESPERANDO QUE INGRESES LA CONTRASEÑA
+```
+
+Una vez que ingreses el usuario y la contraseña, aparece algo asi:
+
+```bash
 Access Granted.
 Welcome, ******
 DEBUG: Reading user configuration...
@@ -84,8 +98,8 @@ PUFU OS PUBLIC CLOUD ACCESS (NGROK)
 ========================================
 Click here to access Pufu OS: https:// enlace a la pagina de la gui ejecutandose en el colab
 ========================================
-... (cada cierta cantidad de segundos aca se van a imprimir mensajes de status)```
-
+... (cada cierta cantidad de segundos aca se van a imprimir mensajes de status)
+```
 
 Para cerrar Pufu OS en el colab, solo tienes que ejecutar el siguiente comando:
 
@@ -106,15 +120,15 @@ Cuando Pufu es terminado aparece algo asi:
 [TRINITY] Shutting down. Freeing payloads...
 
 [Kernel] FATAL ERROR: Signal 11 caught! # estos errores son normales, solo dicen que no se cerro correctamente el kernel
-[Kernel] Dumping Crash Log to 'crash.log'...```
-
+[Kernel] Dumping Crash Log to 'crash.log'...
+```
 
 
 **"Pasos para ejecutar Pufu OS localmente"**
 
 1. localmente se tiene que descargar el repositorio como .zip y descomprimirlo.
 
-2. una vez descomprimido se tiene que ejecutar el siguiente comando por terminal:
+2. una vez descomprimido se tiene que ejecutar el siguiente comando por terminal en la carpeta pufu-os:
 
 ```bash
 make run
