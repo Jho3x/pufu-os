@@ -107,7 +107,7 @@ def main():
     proc = run_os()
     
     # Wait for the service to be ready
-    if not wait_for_server(8080):
+    if not wait_for_server(8081):
         print("Error: Pufu OS Web Backend failed to start.")
         if proc.stderr:
             print(proc.stderr.read().decode())
@@ -115,7 +115,7 @@ def main():
         return
 
     # Use Ngrok
-    start_ngrok(8080, proc)
+    start_ngrok(8081, proc)
     
     # Cleanup (Redundant if loop breaks, but safe)
     if proc.poll() is None:

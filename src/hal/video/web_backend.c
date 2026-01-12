@@ -13,6 +13,7 @@
 #include <arpa/inet.h>
 #include <math.h>
 #include <pthread.h>
+#include <signal.h> // For SIGPIPE
 #include <stdbool.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -20,7 +21,7 @@
 #include <sys/socket.h>
 #include <unistd.h>
 
-#define WEB_PORT 8080
+#define WEB_PORT 8081
 #define FB_WIDTH 800
 #define FB_HEIGHT 600
 #define MAX_TEXTURES 64
@@ -81,17 +82,33 @@ void *server_thread_func(void *arg) {
   struct sockaddr_in address;
   int addrlen = sizeof(address);
   printf("[WebBackend] Server thread started on port %d\n", WEB_PORT);
+
+  // Ignore SIGPIPE to prevent crash on client disconnect
+  signal(SIGPIPE, SIG_IGN);
+
   while (1) {
     int new_socket = accept(server_socket, (struct sockaddr *)&address,
                             (socklen_t *)&addrlen);
     if (new_socket < 0)
       continue;
+
+    // printf("[Web] Accepted connection\n"); // Debug spam
+
     char buffer[1024] = {0};
-    read(new_socket, buffer, 1024);
-    if (strstr(buffer, "GET /fb.ppm"))
-      send_ppm(new_socket);
-    else
-      send(new_socket, HTML_VIEWER, strlen(HTML_VIEWER), 0);
+    int bytes_read = read(new_socket, buffer, 1023);
+
+    if (bytes_read > 0) {
+      // Simple log of request line
+      char *line_end = strchr(buffer, '\n');
+      if (line_end)
+        *line_end = '\0';
+      printf("[Web] Request: %s\n", buffer);
+
+      if (strstr(buffer, "GET /fb.ppm"))
+        send_ppm(new_socket);
+      else
+        send(new_socket, HTML_VIEWER, strlen(HTML_VIEWER), 0);
+    }
     close(new_socket);
   }
   return NULL;
