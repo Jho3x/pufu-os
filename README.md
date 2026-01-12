@@ -2,25 +2,36 @@
 
 **Pufu OS** is an experimental, fractal operating system built on a custom Virtual Machine architecture.
 
-## 📚 Documentation Flow
+> **"Fractal Architecture?"**
+> In Pufu OS, the user interface and system structure are recursive. Every window ("Frame") can contain other Frames indefinitely, and they all share the same logic (Trinity Nodes). This allows for infinite nesting and zooming of workspaces.
 
-If you are an AI agent or developer looking to understand the system, follow this reading order:
+## 📚 Documentation
 
-### 1. High-Level Concepts
-*   [Architecture](file:///home/joel/z_pufu_4/docs/architecture.md): Explains the Fractal UI, Event-Driven MVC, and "Frame" concepts.
-*   [Terminal Architecture (Oxide)](file:///home/joel/z_pufu_4/docs/oxide_reference.md): Explains TWS (Window Spaces), Async CLI, and Headless Apps.
+Detailed specifications for the custom languages and protocols:
 
-### 2. Technical References
-*   [Socket Reference (HAL)](file:///home/joel/z_pufu_4/docs/socket_reference.md): "The Hardware". Defines the `PufuSocket` structs, Hot Swap mechanism, and API dictionary.
-*   [Paw Language (ASM)](file:///home/joel/z_pufu_4/docs/paw_reference.md): "The Assembly". Dictionary of instructions for the Pufu VM.
+### 1. Languages & Protocols
+*   **[Paw (ASM)](docs/specs/paw_dictionary.md)**: The Assembly language for the Pufu VM. Defines the instruction set.
+*   **[Meow (UI)](docs/specs/meow_dictionary.md)**: The Markup Language for defining the Fractal UI (Trinity).
+*   **[Claw (Kernel)](docs/specs/claw_dictionary.md)**: The Interface Description Language for Kernel Syscalls and IPC.
 
-### 3. Implementation Details
-*   [Directory Structure](file:///home/joel/z_pufu_4/docs/directory_structure.md): **Start Here**. Detailed breakdown of every folder and key file in the repo.
-*   [MVP Plan](file:///home/joel/z_pufu_4/docs/mvp_plan.md): Historical roadmap of the "Pure VM" refactor.
-*   [Hot Swap Spec](file:///home/joel/z_pufu_4/docs/hot_swap_spec.md): Specification for the dynamic reload system.
+### 2. Guides
+*   **[Cloud Deployment](docs/CLOUD_DEPLOY.md)**: How to run Pufu OS in Google Colab (Headless/Web Mode).
+
+## 🛠️ Prerequisites
+
+To build and run Pufu OS, you need a standard Linux environment:
+*   `gcc` (Build Essential)
+*   `make`
+*   `python3` (For build tools and launcher)
 
 ## 🚀 Quick Start
-Run the OS (booting to Oxide Shell):
+
+Run the OS in local mode:
 ```bash
 make run
+```
+
+Or deploy to the cloud (Google Colab):
+```bash
+python3 tools/pufu_colab.py
 ```

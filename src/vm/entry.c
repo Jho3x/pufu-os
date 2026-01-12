@@ -4,6 +4,7 @@
 #include "pufu/node.h"
 #include "pufu/terminal.h"
 #include "pufu/trinity.h"
+#include "pufu/version.h"
 #include "pufu/watchdog.h"
 #include <fcntl.h>
 #include <signal.h>
@@ -109,11 +110,12 @@ int main(int argc, char **argv) {
   pufu_logger_init();
 
   // Disable stdout buffering for responsive terminal
+
   // Disable stdout buffering for responsive terminal in Colab
   setvbuf(stdout, NULL, _IONBF, 0);
 
   // Mostrar mensaje de inicio
-  pufu_log("\n=== Pufu Bootloader ===");
+  printf("\n=== Pufu Bootloader [%s] ===\n", PUFU_VERSION_STRING);
   pufu_log("Iniciando carga dinámica del socket...");
 
   // Inicializar Watchdog
