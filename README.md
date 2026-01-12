@@ -1,4 +1,4 @@
-# Pufu OS (v0.6 'Peking Duck')
+# Pufu OS (v0.7 'Lumina')
 
 **Pufu OS** is an experimental, fractal operating system built on a custom Virtual Machine architecture.
 
