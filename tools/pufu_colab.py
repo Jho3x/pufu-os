@@ -30,7 +30,9 @@ def compile_os():
 def run_os():
     print("Launching Pufu OS (Background)...")
     # Must pass the bootloader script
-    return subprocess.Popen(["./bin/pufu_os", "src/userspace/boot/bootloader.pufu"], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+    # We remove stdout/stderr PIPE to allow logs to print to console directly
+    # and prevent buffer deadlocks.
+    return subprocess.Popen(["./bin/pufu_os", "src/userspace/boot/bootloader.pufu"])
 
 def wait_for_server(port, timeout=30):
     print(f"Waiting for Pufu OS Web Backend on port {port}...")
@@ -108,9 +110,7 @@ def main():
     
     # Wait for the service to be ready
     if not wait_for_server(8081):
-        print("Error: Pufu OS Web Backend failed to start.")
-        if proc.stderr:
-            print(proc.stderr.read().decode())
+        print("Error: Pufu OS Web Backend failed to start (Timeout).")
         proc.terminate()
         return
 
