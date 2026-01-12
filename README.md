@@ -10,6 +10,7 @@ Paso a decir los pasos para ambos y mas abajo voy a explicar los detalles de Puf
 .
 .
 .
+
 **" 1 Pasos para Google Colab"**
 
 1.a Para usar Pufu en Google Colab, necesitas una cuenta en ngrok (https://dashboard.ngrok.com/get-started/your-authtoken) ese enlace lleva al autotoken. Cuando tengas una cuenta vas a la barra izquierda donde dice "getting started" -> "your authtoken" -> "copy authtoken".
@@ -130,9 +131,9 @@ Cuando Pufu es terminado aparece algo asi:
 
 **"2 Pasos para ejecutar Pufu OS localmente"**
 
-1. localmente se tiene que descargar el repositorio como .zip y descomprimirlo.
+2.a localmente se tiene que descargar el repositorio como .zip y descomprimirlo.
 
-2. una vez descomprimido se tiene que ejecutar el siguiente comando por terminal en la carpeta pufu-os:
+2.b una vez descomprimido se tiene que ejecutar el siguiente comando por terminal en la carpeta pufu-os:
 
 ```bash
 make run
