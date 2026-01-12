@@ -45,7 +45,7 @@ def wait_for_server(port, timeout=30):
     print("\nTimeout waiting for server.")
     return False
 
-def start_ngrok(port):
+def start_ngrok(port, proc):
     print("\n" + "="*40)
     print("PUFU OS PUBLIC CLOUD ACCESS (NGROK)")
     print("="*40)
@@ -70,11 +70,21 @@ def start_ngrok(port):
         print(f"\nClick here to access Pufu OS: {public_url}")
         print("="*40 + "\n")
         
-        # Keep alive
+        # Keep alive & Monitor Process
         while True:
             time.sleep(1)
+            if proc.poll() is not None:
+                print("\n[!] Pufu OS has stopped unexpectedly!")
+                print("Exit Code:", proc.returncode)
+                if proc.stderr:
+                    print("--- STDERR ---")
+                    print(proc.stderr.read().decode())
+                    print("--------------")
+                break
     except Exception as e:
         print(f"Ngrok Error: {e}")
+    finally:
+        ngrok.kill()
 
 def main():
     if not os.path.exists("Makefile"):
@@ -105,15 +115,11 @@ def main():
         return
 
     # Use Ngrok
-    start_ngrok(8080)
+    start_ngrok(8080, proc)
     
-    try:
-        proc.wait()
-    except KeyboardInterrupt:
-        print("Stopping...")
+    # Cleanup (Redundant if loop breaks, but safe)
+    if proc.poll() is None:
         proc.terminate()
-        from pyngrok import ngrok
-        ngrok.kill()
 
 if __name__ == "__main__":
     main()
