@@ -27,12 +27,37 @@ def compile_os():
         sys.exit(1)
     print("Compilation Success.")
 
+import threading
+
+def stream_reader(pipe, name):
+    try:
+        with pipe:
+            for line in iter(pipe.readline, b''):
+                print(line.decode().strip())
+    except Exception:
+        pass
+
 def run_os():
     print("Launching Pufu OS (Background)...")
     # Must pass the bootloader script
-    # We remove stdout/stderr PIPE to allow logs to print to console directly
-    # and prevent buffer deadlocks.
-    return subprocess.Popen(["./bin/pufu_os", "src/userspace/boot/bootloader.pufu"])
+    # We use PIPE to capture output, but read it in threads to avoid blocking
+    proc = subprocess.Popen(
+        ["./bin/pufu_os", "src/userspace/boot/bootloader.pufu"],
+        stdout=subprocess.PIPE,
+        stderr=subprocess.PIPE,
+        bufsize=0 # Unbuffered
+    )
+    
+    # Start threads to print output
+    t_out = threading.Thread(target=stream_reader, args=(proc.stdout, "OUT"))
+    t_out.daemon = True
+    t_out.start()
+    
+    t_err = threading.Thread(target=stream_reader, args=(proc.stderr, "ERR"))
+    t_err.daemon = True
+    t_err.start()
+    
+    return proc
 
 def wait_for_server(port, proc, timeout=30):
     print(f"Waiting for Pufu OS Web Backend on port {port}...")
@@ -49,7 +74,7 @@ def wait_for_server(port, proc, timeout=30):
                 return True
         except (socket.timeout, ConnectionRefusedError):
             time.sleep(0.5)
-    print("\nTimeout waiting for server.")
+    print("\nTimeout waiting for server (Is the port blocked?).")
     return False
 
 def start_ngrok(port, proc):
@@ -67,7 +92,7 @@ def start_ngrok(port, proc):
         return
 
     # 2. Setup Ngrok
-    from pyngrok import ngrok, conf
+    from pyngrok import ngrok, conf, exception
     conf.get_default().auth_token = token
     
     # 3. Connect
@@ -83,13 +108,11 @@ def start_ngrok(port, proc):
             if proc.poll() is not None:
                 print("\n[!] Pufu OS has stopped unexpectedly!")
                 print("Exit Code:", proc.returncode)
-                if proc.stderr:
-                    print("--- STDERR ---")
-                    print(proc.stderr.read().decode())
-                    print("--------------")
                 break
-    except Exception as e:
+    except exception.PyngrokNgrokError as e:
         print(f"Ngrok Error: {e}")
+    except Exception as e:
+        print(f"General Error: {e}")
     finally:
         ngrok.kill()
 
@@ -122,7 +145,7 @@ def main():
     # Use Ngrok
     start_ngrok(8081, proc)
     
-    # Cleanup (Redundant if loop breaks, but safe)
+    # Cleanup
     if proc.poll() is None:
         proc.terminate()
 

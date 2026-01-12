@@ -18,6 +18,12 @@ void pufu_terminal_init(void) {
   if (terminal_configured)
     return;
 
+  if (!isatty(STDIN_FILENO)) {
+    printf("[Terminal] WARN: Not a TTY. Skipping raw mode.\n");
+    terminal_configured = 1;
+    return;
+  }
+
   tcgetattr(STDIN_FILENO, &orig_termios);
   struct termios newt = orig_termios;
 
