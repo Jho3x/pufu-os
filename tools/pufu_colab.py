@@ -52,6 +52,11 @@ def main():
         print("Error: Run this from the repository root.")
         return
 
+    # Cleanup previous instances
+    print("Cleaning up old processes...")
+    subprocess.run(["pkill", "-9", "pufu_os"])
+    time.sleep(1)
+
     compile_os()
     
     # Ensure config asks for GUI (Web Backend)
