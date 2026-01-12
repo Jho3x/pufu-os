@@ -32,8 +32,8 @@ def compile_os():
 
 def run_os():
     print("Launching Pufu OS (Background)...")
-    # Using nohup or just Popen
-    return subprocess.Popen(["./bin/pufu_os"], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+    # Must pass the bootloader script
+    return subprocess.Popen(["./bin/pufu_os", "src/userspace/boot/bootloader.pufu"], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
 
 def bridge_port():
     try:
@@ -62,15 +62,14 @@ def main():
     # Force GUI mode for Cloud
     print("Configuring for Cloud (GUI Mode)...")
     subprocess.run(["sed", "-i", "s/mode: cli/mode: gui/g", "src/userspace/boot/user_config.pufu"])
-
-def run_os():
-    print("Launching Pufu OS (Background)...")
-    # Must pass the bootloader script
-    return subprocess.Popen(["./bin/pufu_os", "src/userspace/boot/bootloader.pufu"], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+    
+    proc = run_os()
+    time.sleep(2) # Wait for boot
     
     if proc.poll() is not None:
         print("Pufu OS exited prematurely.")
-        print(proc.stderr.read().decode())
+        if proc.stderr:
+            print(proc.stderr.read().decode())
         return
 
     bridge_port()
