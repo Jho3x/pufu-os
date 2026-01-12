@@ -59,12 +59,14 @@ def main():
 
     compile_os()
     
-    # Ensure config asks for GUI (Web Backend)
-    # We might need to force it via sed if it was committed as CLI
-    # but current state is GUI.
-    
-    proc = run_os()
-    time.sleep(2) # Wait for boot
+    # Force GUI mode for Cloud
+    print("Configuring for Cloud (GUI Mode)...")
+    subprocess.run(["sed", "-i", "s/mode: cli/mode: gui/g", "src/userspace/boot/user_config.pufu"])
+
+def run_os():
+    print("Launching Pufu OS (Background)...")
+    # Must pass the bootloader script
+    return subprocess.Popen(["./bin/pufu_os", "src/userspace/boot/bootloader.pufu"], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
     
     if proc.poll() is not None:
         print("Pufu OS exited prematurely.")
