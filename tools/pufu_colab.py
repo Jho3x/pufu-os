@@ -34,10 +34,15 @@ def run_os():
     # and prevent buffer deadlocks.
     return subprocess.Popen(["./bin/pufu_os", "src/userspace/boot/bootloader.pufu"])
 
-def wait_for_server(port, timeout=30):
+def wait_for_server(port, proc, timeout=30):
     print(f"Waiting for Pufu OS Web Backend on port {port}...")
     start_time = time.time()
     while time.time() - start_time < timeout:
+        # Check if process died
+        if proc.poll() is not None:
+            print(f"\n[!] Process died early with Exit Code: {proc.returncode}")
+            return False
+            
         try:
             with socket.create_connection(("localhost", port), timeout=1):
                 print("Server Ready!")
@@ -109,8 +114,8 @@ def main():
     proc = run_os()
     
     # Wait for the service to be ready
-    if not wait_for_server(8081):
-        print("Error: Pufu OS Web Backend failed to start (Timeout).")
+    if not wait_for_server(8081, proc):
+        print("Error: Pufu OS Web Backend failed to start (Timeout or Crash).")
         proc.terminate()
         return
 
