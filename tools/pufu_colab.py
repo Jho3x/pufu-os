@@ -13,7 +13,6 @@ import time
 import sys
 import socket
 import getpass
-from pyngrok import ngrok, conf, exception
 
 def install_deps():
     print("Installing dependencies...")
@@ -104,6 +103,9 @@ def wait_for_server(port, proc, timeout=30):
     return False
 
 def start_ngrok(port, proc, auth_token):
+    # Import here because it's installed by install_deps() earlier
+    from pyngrok import ngrok, conf, exception
+    
     # Set the token programmatically
     ngrok.set_auth_token(auth_token)
 
