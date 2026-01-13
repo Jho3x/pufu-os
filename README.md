@@ -138,28 +138,31 @@ Cuando Pufu es terminado aparece algo asi:
 ```bash
 make run
 ```
+
+( Hay que recordar que el comando "make" es propio de gcc y por tanto se debe tener gcc instalado en el sistema. )
 .
 .
 .
 
 
-## 📚 Documentation
+## 📚 Documentacion
 
-Detailed specifications for the custom languages and protocols:
+Lenguajes que usa Pufu: (la documentacion por ahora esta en ingles)
 
 ### 1. Languages & Protocols
 *   **[Paw (ASM)](docs/specs/paw_dictionary.md)**: The Assembly language for the Pufu VM. Defines the instruction set.
-*   **[Meow (UI)](docs/specs/meow_dictionary.md)**: The Markup Language for defining the Fractal UI (Trinity).
-*   **[Claw (Kernel)](docs/specs/claw_dictionary.md)**: The Interface Description Language for Kernel Syscalls and IPC.
-
-### 2. Guides
-*   **[Cloud Deployment](docs/CLOUD_DEPLOY.md)**: How to run Pufu OS in Google Colab (Headless/Web Mode).
-
+*   **[Meow (UI)](docs/specs/meow_dictionary.md)**: High level Languagewich makes paw calls.
+*   **[Claw (Kernel)](docs/specs/claw_dictionary.md)**: High level Language which is used for graphing and AI.
+.
+.
+.
 ## 🛠️ Prerequisites
 
-To build and run Pufu OS, you need a standard Linux environment:
+Para compilar y correr Pufu de manera local (PC propia) se necesita:
 *   `gcc` (Build Essential)
 *   `make`
-*   `python3` (For build tools and launcher)
+
+Si vas a usarlo en internet por medio de google colab: 
+*   `python3` (Aunque python3 se instala en la pc virtual, no en la local)
 
 
